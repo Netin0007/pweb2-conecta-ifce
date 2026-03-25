@@ -30,12 +30,12 @@ const faq = [
 
 function FaqSection() {
   return (
-    <section className="bg-card py-20">
+    <section className="bg-card py-20" id="faq-section">
       <div className="container-main max-w-3xl">
         <div className="mx-auto text-center">
           <p className="text-primary uppercase text-sm font-semibold tracking-wide">FAQ</p>
-          <h2 className="mt-3 text-4xl font-bold text-balance text-foreground tracking-tight">
-            Perguntas frequentes
+          <h2 className="mt-2 text-3xl font-bold text-foreground tracking-tight sm:text-4xl">
+            Perguntas Frequentes
           </h2>
         </div>
 
