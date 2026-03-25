@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import LoginPage from './pages/LoginPage.tsx'
-import HomePage from './pages/HomePage.tsx'
+import HomePage from './pages/homepage/HomePage.tsx'
 import { RegisterPage } from './pages/RegisterPage.tsx'
 import App from './App.tsx'
 
