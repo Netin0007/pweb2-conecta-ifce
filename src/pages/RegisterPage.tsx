@@ -3,6 +3,8 @@ import { Eye, EyeOff, Loader2Icon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useNavigate } from 'react-router'
+
 import {
   Card,
   CardContent,
@@ -24,6 +26,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
   const [campuses, setCampuses] = useState<
     Array<{
       id: string
@@ -51,19 +54,40 @@ export function RegisterPage() {
     handleSubmit,
     reset,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
+    watch,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     mode: 'onBlur',
   })
 
   const onSubmit = async (data: RegisterFormData) => {
-    console.log('Enviando....', data)
+    const { course, ...rest } = data
+    const payload = data.role === 'student' ? data : rest
 
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      const response = await fetch(
+        'https://conectaifce-api.proflucasmendes.com.br/auth/register',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        },
+      )
 
-    console.log('Usuario cadastrado!', data)
-    reset()
+      if (response.ok) {
+        const responseData = await response.json()
+        localStorage.setItem('access_token', responseData.token)
+        navigate('/')
+      } else {
+        const responseData = await response.json()
+        console.log('Erro da API:', responseData)
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+    }
   }
 
   return (
@@ -119,19 +143,20 @@ export function RegisterPage() {
               </div>
             </div>
 
-             <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="handle">Nome de Usuário</Label>
               <Input
                 id="handle"
                 placeholder="Ex: @Neto"
                 className="h-11 bg-background"
-                {...register("handle")}
+                {...register('handle')}
               />
               {errors.handle && (
-                <p className="text-xs text-destructive">{errors.handle.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.handle.message}
+                </p>
               )}
             </div>
-
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">E-mail institucional</Label>
@@ -212,18 +237,26 @@ export function RegisterPage() {
               </div>
             </div>
 
-             <div className="flex flex-col gap-2">
-                <Label htmlFor="course">Curso</Label>
+            {watch('role') === 'student' && (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="course" className="text-foreground">
+                  Curso
+                </Label>
                 <Input
                   id="course"
+                  type="text"
                   placeholder="Seu curso"
+                  required
                   className="h-11 bg-background"
-                  {...register("course")}
+                  {...register('course')}
                 />
                 {errors.course && (
-                  <p className="text-xs text-destructive">{errors.course.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.course.message}
+                  </p>
                 )}
               </div>
+            )}
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="password">Senha</Label>
@@ -259,12 +292,12 @@ export function RegisterPage() {
               </p>
             </div>
 
-            <Button type="submit" className="h-11 mt-2" disabled={isSubmitting}>
+            <Button type="submit" className="h-11 mt-2" disabled={isSubmitting || !isValid}>
               {isSubmitting ? (
-                <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                <div className="flex items-center gap-2">
+                  <Loader2Icon className="size-4 animate-spin" />
                   Criando conta...
-                </>
+                </div>
               ) : (
                 'Criar conta'
               )}
