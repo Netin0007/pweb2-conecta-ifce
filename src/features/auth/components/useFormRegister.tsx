@@ -2,28 +2,32 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router"
-import { registerSchema, type RegisterFormData } from "../schemas/register.shema"
 
+import {
+  registerSchema,
+  type RegisterFormData,
+} from "../schemas/register.shema"
+
+import { http } from "@/infra/http/http-client"
+import { setAccessToken } from "../storage/auth.storage"
 
 export function UseFormRegister() {
   const [showPass, setShowPass] = useState<boolean>(false)
   const [campuses, setCampuses] = useState<
-    Array<{
-      id: string
-      name: string
-    }>
+    Array<{ id: string; name: string }>
   >([])
 
   const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchCampuses() {
-      const response = await fetch(
-        'https://conectaifce-api.proflucasmendes.com.br/campuses',
-      )
-      if (response.ok) {
-        const data = await response.json()
+      try {
+        const data = await http.get<Array<{ id: string; name: string }>>(
+          "campuses"
+        )
         setCampuses(data)
+      } catch (error) {
+        console.error(error)
       }
     }
 
@@ -38,47 +42,41 @@ export function UseFormRegister() {
     watch,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    mode: 'onBlur',
+    mode: "onBlur",
   })
 
   const onSubmit = async (data: RegisterFormData) => {
-    const { course, ...rest } = data
-    const payload = data.role === 'student' ? data : rest
+    try {
+      const { course, ...rest } = data
+      const payload = data.role === "student" ? data : rest
 
-    const response = await fetch(
-      'https://conectaifce-api.proflucasmendes.com.br/auth/register',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      },
-    )
+      const response = await http.post<{
+        token: string
+        user: any
+      }>("auth/register", payload)
 
-    if (response.ok) {
-      const responseData = await response.json()
-      console.log(responseData)
-      localStorage.setItem('access_token', responseData.token)
-      navigate('feed')
+      setAccessToken(response.token)
+      navigate("/feed")
+    } catch (error) {
+      console.error(error)
     }
   }
-  return{
+
+  return {
     state: {
-      setShowPass,
       showPass,
-      campuses
+      setShowPass,
+      campuses,
     },
     onSubmit,
-    useForm:{
+    useForm: {
       register,
       handleSubmit,
       control,
       isSubmitting,
       isValid,
       errors,
-      watch
-    }
-
+      watch,
+    },
   }
 }

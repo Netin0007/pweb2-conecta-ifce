@@ -8,7 +8,7 @@ export const LoginSchema = z.object({
 
   password: z
     .string()
-    .min(8, 'Mínimo de 8 caracteres')
+    .min(8, 'Minimo de 8 caracteres')
     .regex(/[A-Za-z]/, 'Precisa ter letras')
     .regex(/[0-9]/, 'Precisa ter números'),
 })
