@@ -149,65 +149,67 @@ export function RegisterPage() {
               )}
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="role">Vínculo</Label>
-              <Controller
-                name="role"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value ?? ''}
-                  >
-                    <SelectTrigger id="role" className="h-11 bg-background">
-                      <SelectValue placeholder="Selecione seu vínculo com o IFCE" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="student">Estudante</SelectItem>
-                      <SelectItem value="professor">Docente</SelectItem>
-                      <SelectItem value="technician">
-                        Técnico ou Técnica
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+            <div className="flex gap-4">
+              <div className="flex flex-col gap-2 flex-1">
+                <Label htmlFor="role">Vínculo</Label>
+                <Controller
+                  name="role"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value ?? ''}
+                    >
+                      <SelectTrigger id="role" className="h-11 bg-background">
+                        <SelectValue placeholder="Vínculo com IFCE" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="student">Estudante</SelectItem>
+                        <SelectItem value="professor">Docente</SelectItem>
+                        <SelectItem value="technician">
+                          Técnico ou Técnica
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.role && (
+                  <p className="text-xs text-destructive">
+                    {errors.role.message}
+                  </p>
                 )}
-              />
-              {errors.role && (
-                <p className="text-xs text-destructive">
-                  {errors.role.message}
-                </p>
-              )}
-            </div>
+              </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="campus">Campus</Label>
-              <Controller
-                name="campus"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value ?? ''}
-                  >
-                    <SelectTrigger id="campus" className="h-11 bg-background">
-                      <SelectValue placeholder="Selecione seu campus" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {campuses &&
-                        campuses.map((campus) => (
-                          <SelectItem value={campus.id} key={campus.id}>
-                            {campus.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
+              <div className="flex flex-col gap-2 flex-1">
+                <Label htmlFor="campus">Campus</Label>
+                <Controller
+                  name="campus"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value ?? ''}
+                    >
+                      <SelectTrigger id="campus" className="h-11 bg-background">
+                        <SelectValue placeholder="Seu campus" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {campuses &&
+                          campuses.map((campus) => (
+                            <SelectItem value={campus.id} key={campus.id}>
+                              {campus.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.campus && (
+                  <p className="text-xs text-destructive">
+                    {errors.campus.message}
+                  </p>
                 )}
-              />
-              {errors.campus && (
-                <p className="text-xs text-destructive">
-                  {errors.campus.message}
-                </p>
-              )}
+              </div>
             </div>
 
              <div className="flex flex-col gap-2">
