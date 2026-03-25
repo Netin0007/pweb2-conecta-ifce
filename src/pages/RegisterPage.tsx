@@ -1,13 +1,34 @@
-﻿import { useState } from 'react'
+import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { registerSchema } from '@/schemas/register.shema'
+import { ZodError } from 'zod'
 
 export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.target as HTMLFormElement)
+
+    const data = {
+      firstName: formData.get('firstName'),
+      password: formData.get('password'),
+    }
+
+    try {
+      const validatedData = registerSchema.parse(data)
+      console.log(validatedData)
+    } catch (error) {
+      if (error instanceof ZodError) {
+        console.log(error)
+      }
+    }
+  }
 
   return (
     <section className="flex-1 flex items-center justify-center py-20">
@@ -23,7 +44,7 @@ export function RegisterPage() {
         </CardHeader>
 
         <CardContent>
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             {/* Nome e Sobrenome lado a lado */}
             <div className="flex gap-4">
               <div className="flex flex-col gap-2 flex-1">
