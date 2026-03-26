@@ -1,13 +1,17 @@
-  import Footer from "@/shared/components/footer";
-import Navbar from "@/shared/components/navbar";
-import useScroll from "@/shared/hooks/useScroll";
-import { Outlet } from "react-router";
+import { useAuth } from '@/features/auth/contexts/AuthContext'
+import Navbar from '@/shared/components/navbar'
+import useScroll from '@/shared/hooks/useScroll'
+import { Navigate, Outlet } from 'react-router'
 
-function AppLayout(){
-
+function AppLayout() {
   useScroll()
 
-  return(
+  const { isAuthenticadated } = useAuth()
+  if (!isAuthenticadated) {
+    return <Navigate to="/login" replace />
+  }
+
+  return (
     <>
       <div className="flex flex-col min-h-svh">
         <Navbar />
