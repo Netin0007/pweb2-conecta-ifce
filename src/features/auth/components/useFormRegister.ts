@@ -7,10 +7,11 @@ import {
   registerSchema,
   type RegisterFormData,
 } from '../schemas/register.shema'
-
-import { setAccessToken } from '../storage/auth.storage'
 import { ApiError } from '@/infra/http/api-error'
 import { getCampuses, registerUser } from '../services/register.service'
+import { useAuth } from '../contexts/AuthContext'
+
+
 
 export function UseFormRegister() {
   const [showPass, setShowPass] = useState<boolean>(false)
@@ -20,10 +21,13 @@ export function UseFormRegister() {
   )
 
   const navigate = useNavigate()
+  const {setAuthUser} = useAuth()
 
   useEffect(() => {
     async function fetchCampuses() {
       try {
+        setRegisterError(null)
+
         const data = await getCampuses()
         setCampuses(data)
       } catch (error) {
@@ -51,10 +55,11 @@ export function UseFormRegister() {
   const onSubmit = async (data: RegisterFormData) => {
     const { course, ...rest } = data
 
-    const payload = data.role === 'student' ? data : rest
+    const payload = data.role === 'STUDENT' ? data : rest
 
     try {
-      await registerUser(payload)
+      const responseData = await registerUser(payload)
+      setAuthUser(responseData.user)
       navigate('/feed')
     } catch (error) {
       console.error(error)

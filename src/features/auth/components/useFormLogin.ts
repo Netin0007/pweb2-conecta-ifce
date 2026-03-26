@@ -5,14 +5,14 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { LoginSchema, type LoginFormData } from '../schemas/login.schema'
 import { LoginUser } from '../services/login.service'
-
-
+import { useAuth } from '../contexts/AuthContext.tsx'
 
 export function UseFormLogin() {
   const [showPass, setShowPass] = useState<boolean>(false)
   const [authError, setAuthError] = useState<string | null>(null)
 
   const navigate = useNavigate()
+  const { setAuthUser } = useAuth()
 
   const {
     register,
@@ -25,19 +25,24 @@ export function UseFormLogin() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      LoginUser(data.email, data.password)
+      setAuthError(null)
+      const responseData = await LoginUser(data.email, data.password)
+      setAuthUser(responseData.user)
       navigate('/feed')
     } catch (error) {
-      if(error instanceof ApiError){
+      if (error instanceof ApiError) {
         setAuthError(error.message)
+      } else {
+        setAuthError('Erro inesperado ao fazer login')
       }
     }
   }
+
   return {
     state: {
       showPass,
-      authError,
       setShowPass,
+      authError,
     },
     onSubmit,
     useForm: {

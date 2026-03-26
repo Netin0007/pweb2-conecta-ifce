@@ -100,9 +100,9 @@ function FormRegister() {
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value="student">Estudante</SelectItem>
-                  <SelectItem value="professor">Docente</SelectItem>
-                  <SelectItem value="technician">Tecnico</SelectItem>
+                  <SelectItem value="STUDENT">Estudante</SelectItem>
+                  <SelectItem value="PROFESSOR">Docente</SelectItem>
+                  <SelectItem value="TECHNICIAN">Tecnico</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -121,6 +121,7 @@ function FormRegister() {
             control={useForm.control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value || ""}></Select>
                 <SelectTrigger className="bg-background w-48 h-11" id="campus">
                   <SelectValue placeholder="Selecione seu vinculo com o IFCE" />
                 </SelectTrigger>
@@ -142,7 +143,7 @@ function FormRegister() {
         </div>
       </div>
 
-      {useForm.watch('role') === 'student' && (
+      {useForm.watch('role') === 'STUDENT' && (
         <div className="flex items-center gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="course" className="text-foreground">

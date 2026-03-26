@@ -1,33 +1,32 @@
 import { z } from 'zod'
 
 export const registerSchema = z.object({
-  firstName: z
-    .string()
-    .trim()
-    .min(2, 'O nome deve ter pelo menos 2 caracteres'),
-  lastName: z.string().min(2, 'O sobrenome deve ter pelo menos 2 caracteres'),
+  firstName: z.string().trim().min(2, 'O nome de ter pelo menos 2 caracteres'),
+  lastName: z.string().trim().min(2, 'Sobrenome muito curto'),
   handle: z
     .string()
     .trim()
-    .min(3, 'O nome de usuário deve ter pelo menos 3 caracteres')
-    .max(50)
+    .min(3, 'O nome de usuario deve ter pelo menos 3 caracteres')
     .regex(
-      /^[a-zA-Z0-9_]+$/,
-      'O nome de usuário só pode conter letras, números e underscores',
+      /^[a-zA-Z0-9]+$/,
+      'O nome do usuario só pode conter letras, numeros e undercores',
     ),
-  email: z.string().email('Email inválido').min(1, 'Email é obrigatório'),
-  role: z.enum(['student', 'professor', 'technician']),
+  email: z
+    .string()
+    .email('E-mail inválido')
+    .endsWith('@ifce.edu.br', 'Use email institucional'),
+  role: z.enum(['STUDENT', 'PROFESSOR', 'TECHNICIAN']),
   campus: z.string().nonempty(),
   course: z
     .string()
     .trim()
-    .min(3, 'O nome do curso deve ter pelo menos 3 caracteres')
+    .min(3, 'O nome de curso deve ter pelo menos 3 caracteres')
     .optional(),
   password: z
     .string()
-    .min(8, 'A senha deve conter pelo menos 8 caracteres')
-    .regex(/[A-Za-z]/, 'A senha deve conter letras')
-    .regex(/[0-9]/, 'A senha deve conter números'),
+    .min(8, 'Minimo de 8 caracteres')
+    .regex(/[A-Za-z]/, 'Precisa ter letras')
+    .regex(/[0-9]/, 'Precisa ter números'),
 })
 
 export type RegisterFormData = z.infer<typeof registerSchema>
