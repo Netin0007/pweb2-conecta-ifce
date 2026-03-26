@@ -1,33 +1,36 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useState, useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
 
 import {
   registerSchema,
   type RegisterFormData,
-} from "../schemas/register.shema"
+} from '../schemas/register.shema'
 
-import { http } from "@/infra/http/http-client"
-import { setAccessToken } from "../storage/auth.storage"
+import { setAccessToken } from '../storage/auth.storage'
+import { ApiError } from '@/infra/http/api-error'
+import { getCampuses, registerUser } from '../services/register.service'
 
 export function UseFormRegister() {
   const [showPass, setShowPass] = useState<boolean>(false)
-  const [campuses, setCampuses] = useState<
-    Array<{ id: string; name: string }>
-  >([])
+  const [registerError, setRegisterError] = useState<string | null>(null)
+  const [campuses, setCampuses] = useState<Array<{ id: string; name: string }>>(
+    [],
+  )
 
   const navigate = useNavigate()
 
   useEffect(() => {
     async function fetchCampuses() {
       try {
-        const data = await http.get<Array<{ id: string; name: string }>>(
-          "campuses"
-        )
+        const data = await getCampuses()
         setCampuses(data)
       } catch (error) {
         console.error(error)
+        if (error instanceof ApiError) {
+          setRegisterError(error.message)
+        }
       }
     }
 
@@ -42,23 +45,22 @@ export function UseFormRegister() {
     watch,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    mode: "onBlur",
+    mode: 'onBlur',
   })
 
   const onSubmit = async (data: RegisterFormData) => {
+    const { course, ...rest } = data
+
+    const payload = data.role === 'student' ? data : rest
+
     try {
-      const { course, ...rest } = data
-      const payload = data.role === "student" ? data : rest
-
-      const response = await http.post<{
-        token: string
-        user: any
-      }>("auth/register", payload)
-
-      setAccessToken(response.token)
-      navigate("/feed")
+      await registerUser(payload)
+      navigate('/feed')
     } catch (error) {
       console.error(error)
+      if (error instanceof ApiError) {
+        setRegisterError(error.message)
+      }
     }
   }
 
@@ -66,6 +68,7 @@ export function UseFormRegister() {
     state: {
       showPass,
       setShowPass,
+      registerError,
       campuses,
     },
     onSubmit,
