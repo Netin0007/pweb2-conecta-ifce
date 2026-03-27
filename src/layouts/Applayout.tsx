@@ -2,7 +2,7 @@ import { useAuth } from '@/features/auth/contexts/AuthContext'
 import Navbar from '@/shared/components/navbar'
 import useScroll from '@/shared/hooks/useScroll'
 import { Navigate, Outlet } from "react-router";
-import UserMenu from "@/shared/components/user-menu";
+import UserMenu from "@/features/users/components/user-menu";
 
 
 function AppLayout() {
