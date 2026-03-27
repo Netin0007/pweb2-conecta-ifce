@@ -1,6 +1,6 @@
 import { http } from '@/infra/http/http-client'
-import { setAccessToken } from '../storages/token.storage'
 import type { UserResponseDTO } from '../types/dto/auth-dto'
+import { clearAccessToken, setAccessToken } from '../storages/token.storage'
 
 export async function LoginUser(email: string, password: string): Promise<UserResponseDTO> {
   const responseData = await http.post<UserResponseDTO>('auth/login', {
@@ -9,4 +9,8 @@ export async function LoginUser(email: string, password: string): Promise<UserRe
   })
   setAccessToken(responseData.token)
   return responseData
+}
+
+export function Logout(): void{
+  clearAccessToken()
 }

@@ -1,8 +1,7 @@
 import { useAuth } from '@/features/auth/contexts/AuthContext'
 import Navbar from '@/shared/components/navbar'
 import useScroll from '@/shared/hooks/useScroll'
-import { Link, Navigate, Outlet } from "react-router";
-import { Button } from "@/shared/components/ui/button";
+import { Navigate, Outlet } from "react-router";
 import UserMenu from "@/shared/components/user-menu";
 
 
@@ -19,6 +18,7 @@ function AppLayout() {
       <div className="flex flex-col min-h-svh">
         <Navbar>
           <Navbar.Brand to="/feed" />
+          <Navbar.Search/>
           <Navbar.Links>
             <Navbar.Link to="/feed" text="Feed" />
             <Navbar.Link to="/groups" text="Grupos" />
