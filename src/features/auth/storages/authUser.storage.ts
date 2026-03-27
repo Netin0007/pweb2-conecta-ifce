@@ -1,0 +1,19 @@
+import type { AuthUser } from '@/features/auth/types/dto/AuthDTO'
+
+const KEY_AUTH_USER = 'auth_user'
+
+function setStoredUser(user: AuthUser) {
+	localStorage.setItem(KEY_AUTH_USER, JSON.stringify(user))
+}
+
+function getStoredUSer(): AuthUser | null {
+	const raw = localStorage.getItem(KEY_AUTH_USER)
+	if (!raw) return null
+	return JSON.parse(raw) as AuthUser
+}
+function clearStoredUSer() {
+	localStorage.removeItem(KEY_AUTH_USER)
+}
+
+export { setStoredUser, getStoredUSer, clearStoredUSer }
+

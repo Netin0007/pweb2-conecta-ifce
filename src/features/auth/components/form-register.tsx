@@ -112,8 +112,8 @@ function FormRegister() {
           )}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="role" className="text-foreground">
+     <div className="flex flex-col gap-2">
+          <Label htmlFor="campus" className="text-foreground">
             Campus
           </Label>
           <Controller
@@ -121,9 +121,8 @@ function FormRegister() {
             control={useForm.control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <Select onValueChange={field.onChange} value={field.value || ""}></Select>
                 <SelectTrigger className="bg-background w-48 h-11" id="campus">
-                  <SelectValue placeholder="Selecione seu vinculo com o IFCE" />
+                  <SelectValue placeholder="Selecione seu campus" />
                 </SelectTrigger>
 
                 <SelectContent>
@@ -203,7 +202,7 @@ function FormRegister() {
       <Button
         type="submit"
         className="mt-2 h-11"
-        disabled={useForm.isSubmitting || !useForm.isValid}
+        disabled={useForm.isSubmitting}
       >
         {useForm.isSubmitting ? (
           <span className="flex items-center gap-4">

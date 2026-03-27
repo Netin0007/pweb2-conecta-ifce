@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
-import type { AuthUser } from '../types/dto/auth-dto'
+import type { AuthUser } from '../types/dto/AuthDTO'
 import {
   clearStoredUser,
   getStoredUser,

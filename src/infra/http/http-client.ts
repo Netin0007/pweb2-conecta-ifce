@@ -1,4 +1,5 @@
-import { ApiError, type ApiErrorResponse } from './api-error'
+import { getAccessToken } from "@/features/auth/storages/token.storage";
+import { ApiError, type ApiErrorResponse } from "./api-error";
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -7,14 +8,13 @@ export const http = {
     endpoint: string,
     searchParams?: Array<{ key: string; value: string }>,
   ): Promise<ResponseType> => {
-    const finalUrl = buildUrl(endpoint, searchParams)
-    const response = await fetch(finalUrl)
-
+   const finalUrl = buildUrl(endpoint, searchParams)
+    const response = await fetchWithToken(finalUrl)
     const responseBody = await response.json()
-
     if (response.ok) {
       return responseBody as ResponseType
     }
+
     const { error } = responseBody as ApiErrorResponse
     throw new ApiError(
       error.message,
@@ -29,7 +29,7 @@ export const http = {
     body: any,
   ): Promise<ResponseType> => {
     const finalUrl = buildUrl(endPoint)
-    const response = await fetch(finalUrl, {
+    const response = await fetchWithToken(finalUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,4 +65,22 @@ function buildUrl(
   }
 
   return finalUrl.toString()
+}
+
+
+function fetchWithToken(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const token = getAccessToken()
+
+  if(!token) {
+    return fetch(input, init)
+
+  }
+
+  return fetch(input, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      'Authorization': `Bearer ${token}`
+    }
+  })
 }
